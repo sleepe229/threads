@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane prefHeight="322.0" prefWidth="470.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23" fx:controller="com.example.threads.HelloController">
+  <padding>
+    <Insets bottom="20" left="20" right="20" top="20" />
+  </padding>
+
+  <top>
+    <Button fx:id="start_btn" text="smoke" onAction="#trySmoke" BorderPane.alignment="CENTER" />
+  </top>
+
+  <center>
+    <AnchorPane>
+
+      <Circle fx:id="circleMatchSmoker" layoutX="141.0" layoutY="190.0" radius="30" style="-fx-fill: green;" AnchorPane.leftAnchor="111.0" AnchorPane.topAnchor="160.0" />
+      <Text fx:id="textMatch" layoutX="141.0" layoutY="190.0" text="M" style="-fx-font-size: 20;" fill="white" textAlignment="CENTER" />
+
+      <Circle fx:id="circleTobaccoSmoker" layoutX="229.0" layoutY="99.0" radius="30" style="-fx-fill: green;" AnchorPane.leftAnchor="199.0" AnchorPane.topAnchor="69.0" />
+      <Text fx:id="textTobacco" layoutX="229.0" layoutY="99.0" text="T" style="-fx-font-size: 20;" fill="white" textAlignment="CENTER" />
+
+      <Circle fx:id="circlePaperSmoker" layoutX="336.0" layoutY="190.0" radius="30" style="-fx-fill: green;" AnchorPane.leftAnchor="306.0" AnchorPane.topAnchor="160.0" />
+      <Text fx:id="textPaper" layoutX="336.0" layoutY="190.0" text="P" style="-fx-font-size: 20;" fill="white" textAlignment="CENTER" />
+
+    </AnchorPane>
+  </center>
+</BorderPane>
