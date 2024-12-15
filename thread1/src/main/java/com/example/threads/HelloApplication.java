@@ -15,6 +15,10 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
         stage.setTitle("Hello!");
         stage.setScene(scene);
+
+        HelloController controller = fxmlLoader.getController();
+
+        stage.setOnCloseRequest(event -> {controller.stopAllThreads();});
         stage.show();
 //        initializeSmokers();
     }

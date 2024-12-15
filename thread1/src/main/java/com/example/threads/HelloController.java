@@ -6,6 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 
@@ -30,6 +32,8 @@ public class HelloController {
     static boolean paperOnTable = false;
     static boolean matchesOnTable = false;
 
+    private final List<Thread> threads = new ArrayList<>();
+
     @FXML
     void trySmoke(){
         Thread paper = new Thread(new Smoker("paper", circlePaperSmoker));
@@ -37,10 +41,21 @@ public class HelloController {
         Thread tobacco = new Thread(new Smoker("tobacco", circleTobaccoSmoker));
         Thread agent = new Thread(new Agent(circlePaperSmoker, circleMatchSmoker, circleTobaccoSmoker));
 
+        threads.add(paper);
+        threads.add(matches);
+        threads.add(tobacco);
+        threads.add(agent);
+
         paper.start();
         matches.start();
         tobacco.start();
         agent.start();
+    }
+
+    public void stopAllThreads() {
+        for (Thread thread : threads) {
+            thread.interrupt();
+        }
     }
 
     private static class Smoker implements Runnable{
@@ -59,43 +74,30 @@ public class HelloController {
                     switch (ingredient) {
                         case "paper" -> {
                             smokerPaperSem.acquireUninterruptibly();
-                            updateColorUI(circle, Color.YELLOW);
+                            updateColorUI(circle, Color.GREEN);
                         }
                         case "matches" -> {
                             smokerMatchesSem.acquireUninterruptibly();
-                            updateColorUI(circle, Color.YELLOW);
+                            updateColorUI(circle, Color.GREEN);
                         }
                         case "tobacco" -> {
                             smokerTobaccoSem.acquireUninterruptibly();
-                            updateColorUI(circle, Color.YELLOW);
+                            updateColorUI(circle, Color.GREEN);
                         }
                     }
-                    if ((ingredient.equals("paper") && tobaccoOnTable && matchesOnTable) ||
-                            (ingredient.equals("matches") && tobaccoOnTable && paperOnTable) ||
-                            (ingredient.equals("tobacco") && paperOnTable && matchesOnTable)) {
 
-                        out.println("smoker " + ingredient + " make cigarette");
-                        Thread.sleep(10000);
+                    updateColorUI(circle, Color.RED);
+                    out.println("smoker " + ingredient + " smoking");
+                    agentSem.release();
 
-                        if (ingredient.equals("paper")) {
-                            paperOnTable = false;
-                        } else if (ingredient.equals("matches")) {
-                            matchesOnTable = false;
-                        } else if (ingredient.equals("tobacco")) {
-                            tobaccoOnTable = false;
-                        }
+                    Thread.sleep(5000);
+                    updateColorUI(circle, Color.YELLOW);
 
-                        updateColorUI(circle, Color.RED);
-                        out.println("smoker " + ingredient + " smoking");
-                        agentSem.release();
-
-                        Thread.sleep(10000);
-                        updateColorUI(circle, Color.GREEN);
-                    }
 
 
                 } catch (InterruptedException e){
                     Thread.currentThread().interrupt();
+                    break;
                 }
             }
         }
@@ -123,30 +125,31 @@ public class HelloController {
                             tobaccoOnTable = true;
                             matchesOnTable = true;
                             smokerPaperSem.release();
-                            updateColorUI(circlePaper, Color.BLUE);
+//                            updateColorUI(circlePaper, Color.BLUE);
                         }
                         case 1 -> {
                             out.println("agent takes paper and matches");
                             paperOnTable = true;
                             matchesOnTable = true;
                             smokerTobaccoSem.release();
-                            updateColorUI(circleTobacco, Color.BLUE);
+//                            updateColorUI(circleTobacco, Color.BLUE);
                         }
                         case 2 -> {
                             out.println("agent takes tobacco and paper");
                             tobaccoOnTable = true;
                             paperOnTable = true;
                             smokerMatchesSem.release();
-                            updateColorUI(circleMatches, Color.BLUE);
+//                            updateColorUI(circleMatches, Color.BLUE);
                         }
                     }
 
                     agentSem.acquireUninterruptibly();
-                    Thread.sleep(10000);
+                    Thread.sleep(100);
 
                 }
                 catch (InterruptedException e){
                     Thread.currentThread().interrupt();
+                    break;
                 }
             }
         }
